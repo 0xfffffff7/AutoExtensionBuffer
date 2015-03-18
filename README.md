@@ -34,5 +34,8 @@ AutoExtensionBuffer for c++
     
     // no extension.
     // p = buf.get(false);  // Equivalence last().
-
+    
+    
+    // Danger. orver capacity.
+    socket.recv( buf.get(), 5000 );
 
