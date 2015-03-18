@@ -117,6 +117,7 @@ public:
 		_bover = false;
 	}
 
+	void update_length(uint32_t n) { _length = n; }
 	void add_length(uint32_t n) { _length += n; }
 	uint32_t length() { return _length; }
 	uint32_t capacity() { return _capacity; }
