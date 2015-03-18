@@ -4,6 +4,8 @@
 #include <cstdint>
 
 #define AUTOEXTENSION_BUFFER_BASEBUFSIZE		4096
+#define AUTOEXTENSION_BUFFER_EXTENSION_BUFSIZE	2048
+#define AUTOEXTENSION_BUFFER_EXTENSION_RATE		1.2
 
 class AutoExtensionBuffer
 {
@@ -14,7 +16,8 @@ public:
 		_length = 0;
 		_capacity = AUTOEXTENSION_BUFFER_BASEBUFSIZE;
 		_bover = false;
-		_extension_size = AUTOEXTENSION_BUFFER_BASEBUFSIZE;
+		_extension_size = AUTOEXTENSION_BUFFER_EXTENSION_BUFSIZE;
+		_rate = AUTOEXTENSION_BUFFER_EXTENSION_RATE;
 	}
 
 	~AutoExtensionBuffer(void){
@@ -77,7 +80,7 @@ public:
 	int8_t* get(bool bExtension = false){
 
 		if (bExtension && (_length + _extension_size)  > _capacity){
-			if (!reserve(_length + _extension_size)){
+			if (!reserve(static_cast<uint32_t>( _length + (static_cast<double>(_extension_size) * _rate)))){
 				return NULL;
 			}
 		}
@@ -117,6 +120,7 @@ public:
 		_bover = false;
 	}
 
+	void set_rate(double n){ _rate = n; }
 	void update_length(uint32_t n) { _length = n; }
 	void add_length(uint32_t n) { _length += n; }
 	uint32_t length() { return _length; }
@@ -131,6 +135,7 @@ private:
 	uint32_t _extension_size;
 	uint32_t _length;
 	uint32_t _capacity;
+	double _rate;
 	bool _bover;
 };
 
