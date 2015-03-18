@@ -10,7 +10,7 @@ class AutoExtensionBuffer
 public:
 	AutoExtensionBuffer(void){
 		memset(_base, 0x00, AUTOEXTENSION_BUFFER_BASEBUFSIZE);
-		_buf = NULL;
+        _buf = (int8_t*)::malloc(0);
 		_length = 0;
 		_capacity = AUTOEXTENSION_BUFFER_BASEBUFSIZE;
 		_bover = false;
@@ -18,16 +18,12 @@ public:
 	}
 
 	~AutoExtensionBuffer(void){
-		if (_buf != NULL){
-			::free(_buf);
-			_buf = NULL;
-		}
+        AutoExtensionBuffer::free();
 	}
 
 	int8_t* write(const int8_t* p, uint32_t n){
 
-		if (n < 0) return false;
-		if (p == NULL) return false;
+		if (p == NULL) return NULL;
 
 		if ((_length + n)  > _capacity){
 			if (!reserve(_length + n)){
@@ -64,12 +60,8 @@ public:
 			_bover = true;
 		}
 
-		if (_buf == NULL){
-			_buf = new int8_t[n];
-		}
-		else{
-			_buf = (int8_t*)::realloc((void*)_buf, n);
-		}
+
+        _buf = (int8_t*)::realloc((void*)_buf, n);
 
 		if (_buf == NULL) return false;
 
@@ -117,7 +109,7 @@ public:
 	}
 
 	void free(){
-		if (_buf != NULL){
+		if (_bover){
             ::free(_buf);
 			_buf = NULL;
 		}
