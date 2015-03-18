@@ -24,7 +24,7 @@ public:
 		}
 	}
 
-	char* write(const char* p, uint32_t n){
+	int8_t* write(const int8_t* p, uint32_t n){
 
 		if (n < 0) return false;
 		if (p == NULL) return false;
@@ -65,10 +65,10 @@ public:
 		}
 
 		if (_buf == NULL){
-			_buf = new char[n];
+			_buf = new int8_t[n];
 		}
 		else{
-			_buf = (char*)::realloc((void*)_buf, n);
+			_buf = (int8_t*)::realloc((void*)_buf, n);
 		}
 
 		if (_buf == NULL) return false;
@@ -82,9 +82,9 @@ public:
 		return true;
 	}
 
-	char* get(bool bExt = true){ 
+	int8_t* get(bool bExtension = false){
 
-		if (bExt && (_length + _extension_size)  > _capacity){
+		if (bExtension && (_length + _extension_size)  > _capacity){
 			if (!reserve(_length + _extension_size)){
 				return NULL;
 			}
@@ -98,7 +98,7 @@ public:
 		}
 	}
 
-	char* front(){
+	int8_t* front(){
 		if (_bover){
 			return _buf;
 		}
@@ -107,9 +107,9 @@ public:
 		}
 	}
 
-	char* last(){
+	int8_t* last(){
 		if (_bover){
-			return &_buf[_length];;
+			return &_buf[_length];
 		}
 		else{
 			return &_base[_length];
@@ -125,7 +125,7 @@ public:
 		_bover = false;
 	}
 
-	void update_length(uint32_t n) { _length += n; }
+	void add_length(uint32_t n) { _length += n; }
 	uint32_t length() { return _length; }
 	uint32_t capacity() { return _capacity; }
 	void set_extension_size(u_int n){ _extension_size = n; }
@@ -133,8 +133,8 @@ public:
 
 
 private:
-	char _base[AUTOEXTENSION_BUFFER_BASEBUFSIZE];
-	char* _buf;
+	int8_t _base[AUTOEXTENSION_BUFFER_BASEBUFSIZE];
+	int8_t* _buf;
 	uint32_t _extension_size;
 	uint32_t _length;
 	uint32_t _capacity;
