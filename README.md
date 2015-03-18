@@ -25,8 +25,8 @@ AutoExtensionBuffer for c++
     
     
     // get() is auto extension capacity. [_length + _extension_size(4096)].
-    socket.recv( buf.get(), buf.get_extension_size() );
-    
+    int r = socket.recv( buf.get(), buf.get_extension_size() );
+    buf.update_length(r);
     
     // change extension size.
     buf.set_extension_size(2048);

@@ -125,6 +125,7 @@ public:
 		_bover = false;
 	}
 
+	void update_length(uint32_t n) { _length += n; }
 	uint32_t length() { return _length; }
 	uint32_t capacity() { return _capacity; }
 	void set_extension_size(u_int n){ _extension_size = n; }
