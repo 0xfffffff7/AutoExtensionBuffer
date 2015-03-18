@@ -1,7 +1,7 @@
 # AutoExtensionBuffer
 AutoExtensionBuffer for c++
   
-First I use the internal static area of 4096.  
+First, use the internal static area of 4096.  
   
 When exceeding 4096 by securing a buffer dynamically use there.  
   
