@@ -1,6 +1,15 @@
 # AutoExtensionBuffer
 AutoExtensionBuffer for c++
-
+  
+First I use the internal static area of 4096.  
+  
+When exceeding 4096 by securing a buffer dynamically use there.  
+  
+After further enough no longer become likely, to extend automation the area more than doubled when you pointer obtained in get() .  
+  
+If pre-use area is known, the first reservation can also reserve().  
+  
+  
 # Example  
 
     AutoExtensionBuffer buf;
