@@ -118,7 +118,7 @@ public:
 
 	void free(){
 		if (_buf != NULL){
-			delete _buf;
+            ::free(_buf);
 			_buf = NULL;
 		}
 		_length = 0;
