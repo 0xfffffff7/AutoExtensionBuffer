@@ -128,7 +128,7 @@ public:
 	void add_length(uint32_t n) { _length += n; }
 	uint32_t length() { return _length; }
 	uint32_t capacity() { return _capacity; }
-	void set_extension_size(u_int n){ _extension_size = n; }
+	void set_extension_size(uint32_t n){ _extension_size = n; }
 	uint32_t get_extension_size(){ return _extension_size; }
 
 
