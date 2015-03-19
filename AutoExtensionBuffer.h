@@ -4,7 +4,6 @@
 #include <cstdint>
 
 #define AUTOEXTENSION_BUFFER_BASEBUFSIZE		4096
-#define AUTOEXTENSION_BUFFER_EXTENSION_BUFSIZE	2048
 #define AUTOEXTENSION_BUFFER_EXTENSION_RATE		1.2
 
 class AutoExtensionBuffer
@@ -16,8 +15,8 @@ public:
 		_length = 0;
 		_capacity = AUTOEXTENSION_BUFFER_BASEBUFSIZE;
 		_bover = false;
-		_extension_size = AUTOEXTENSION_BUFFER_EXTENSION_BUFSIZE;
 		_rate = AUTOEXTENSION_BUFFER_EXTENSION_RATE;
+		_writable_size = 0;
 	}
 
 	~AutoExtensionBuffer(void){
@@ -29,7 +28,7 @@ public:
 		if (p == NULL) return NULL;
 
 		if ((_length + n)  > _capacity){
-			if (!reserve(_length + n)){
+			if (!reserve(static_cast<uint32_t>(_length + (static_cast<double>(n)* _rate)))){
 				return NULL;
 			}
 		}
@@ -64,9 +63,11 @@ public:
 		}
 
 
-        _buf = (int8_t*)::realloc((void*)_buf, n);
+		int8_t *p = (int8_t*)::realloc((void*)_buf, n);
+		
+		if (p == NULL) return false;
 
-		if (_buf == NULL) return false;
+		_buf = p;
 
 		if ((orver == false) && (_bover == true)){
 			memcpy(_buf, _base, _length);
@@ -77,14 +78,37 @@ public:
 		return true;
 	}
 
-	int8_t* get(bool bExtension = false){
+	int8_t* transaction(uint32_t n){
 
-		if (bExtension && (_length + _extension_size)  > _capacity){
-			if (!reserve(static_cast<uint32_t>( _length + (static_cast<double>(_extension_size) * _rate)))){
+		if ((_length + n)  > _capacity){
+			if (!reserve(static_cast<uint32_t>(_length + (static_cast<double>(n)* _rate)))){
 				return NULL;
 			}
 		}
 
+		_writable_size = n;
+	
+		return last();
+	}
+
+	int8_t* commit(int32_t n){
+		if ((_length + n) < _capacity){
+			_length += n;
+			_writable_size = 0;
+		}
+		else{
+			return NULL;
+		}
+		return get();
+	}
+
+	int8_t*  commit(){
+		_length += _writable_size;
+		_writable_size = 0;
+		return get();
+	}
+
+	int8_t* get(){
 		if (_bover){
 			return &_buf[_length];
 		}
@@ -104,10 +128,10 @@ public:
 
 	int8_t* last(){
 		if (_bover){
-			return &_buf[_length];
+			return &_buf[_capacity -1];
 		}
 		else{
-			return &_base[_length];
+			return &_base[_capacity - 1];
 		}
 	}
 
@@ -122,20 +146,17 @@ public:
 
 	void set_rate(double n){ _rate = n; }
 	void update_length(uint32_t n) { _length = n; }
-	void add_length(uint32_t n) { _length += n; }
 	uint32_t length() { return _length; }
 	uint32_t capacity() { return _capacity; }
-	void set_extension_size(uint32_t n){ _extension_size = n; }
-	uint32_t get_extension_size(){ return _extension_size; }
-
+	uint32_t get_writable_size(){ return _writable_size; }
 
 private:
 	int8_t _base[AUTOEXTENSION_BUFFER_BASEBUFSIZE];
 	int8_t* _buf;
-	uint32_t _extension_size;
 	uint32_t _length;
 	uint32_t _capacity;
 	double _rate;
 	bool _bover;
+	uint32_t _writable_size;
 };
 
